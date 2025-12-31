@@ -178,6 +178,84 @@
                 transform: translateY(100vh) rotate(360deg);
             }
         }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .special-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            font-weight: 700;
+            position: relative;
+            z-index: 10;
+        }
+
+        .special-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+        }
+
+        @media (max-width: 768px) {
+            .close-btn {
+                top: 10px;
+                right: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -211,7 +289,7 @@
 			Поработал в мантерке, опять на море, потом устроился в Фишт, и потом нашёл денёк, чтобы вернуться в отель покрасить номер.<br> 
 			Узнаю понемногу, как что работает, немного, но пойдёт, в будущем придётся больше действий делать на работе, чем сейчас.<br><br>
 			Мне больше всего нравится развиваться в своих отношениях, это прекрасно.<br>
-			Да и вообще, учиться чему-то новому всегда круто, а развивать свои нейронные связи никогда не поздно.<br>
+			Да и вообще, учить чему-то новому всегда круто, а развивать свои нейронные связи никогда не поздно.<br>
 			Надо хвататься за дела и изучать их до конца, бегая от одного дела к другому, ни к чему не придёшь.<br> 
 			Мне надо самому начать следовать этому.<br><br>
 			Впрочем, за год супер-пупер изменений и событий в жизни у меня не произошло, всё плюс-минус стабильно.<br><br>
@@ -257,9 +335,25 @@
         </div>
     </div>
 
-<audio id="bgMusic" loop autoplay>
-<source src="./assets/music.mp3" type="audio/mpeg">
-</audio>
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="special-btn" id="specialBtn">🎁 Особенный момент</button>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <img src="./assets/photo.png" alt="Особенное фото" id="modalImage">
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop autoplay>
+        <source src="./assets/music.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="specialMusic">
+        <source src="./assets/special-music.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         const musicBtn = document.getElementById('musicBtn');
@@ -329,6 +423,34 @@
 
         // Создаем снежинки каждые 200мс
         setInterval(createSnowflake, 200);
+
+        // Модальное окно и специальная музыка
+        const specialBtn = document.getElementById('specialBtn');
+        const modal = document.getElementById('modal');
+        const closeBtn = document.getElementById('closeBtn');
+        const specialMusic = document.getElementById('specialMusic');
+
+        specialBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+            bgMusic.pause();
+            specialMusic.play();
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            specialMusic.pause();
+            specialMusic.currentTime = 0;
+            if (isPlaying) {
+                bgMusic.play();
+            }
+        });
+
+        // Закрытие по клику вне изображения
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeBtn.click();
+            }
+        });
     </script>
 </body>
 </html>
